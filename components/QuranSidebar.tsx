@@ -157,10 +157,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { fetchSurahs, fetchParas } from '@/lib/api';
-import { Surah, Para, QuranType } from '@/types/quran';
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '../components/ui/sidebar';
+import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { fetchSurahs, fetchParas } from '../lib/api';
+import { Surah, Para, QuranType } from '../types/quran';
 import { Loader2, AlertCircle, Sun, Moon } from 'lucide-react';
 import { QuranViewer } from './QuranViewer';
 
@@ -168,81 +168,81 @@ interface QuranSidebarProps {
   initialType: QuranType;
 }
 
-export function QuranSidebar({ initialType }: QuranSidebarProps) {
-  const [activeTab, setActiveTab] = useState<QuranType>(initialType);
-  const [surahs, setSurahs] = useState<Surah[]>([]);
-  const [paras, setParas] = useState<Para[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+export function QuranSidebar( { initialType }: QuranSidebarProps ) {
+  const [ activeTab, setActiveTab ] = useState<QuranType>( initialType );
+  const [ surahs, setSurahs ] = useState<Surah[]>( [] );
+  const [ paras, setParas ] = useState<Para[]>( [] );
+  const [ loading, setLoading ] = useState( false );
+  const [ error, setError ] = useState<string | null>( null );
+  const [ isDarkMode, setIsDarkMode ] = useState( false );
 
   // Selected item state
-  const [selectedSuraIndex, setSelectedSuraIndex] = useState<number | null>(null);
-  const [selectedParaNo, setSelectedParaNo] = useState<number | null>(null);
+  const [ selectedSuraIndex, setSelectedSuraIndex ] = useState<number | null>( null );
+  const [ selectedParaNo, setSelectedParaNo ] = useState<number | null>( null );
 
   // Theme management
-  useEffect(() => {
-    const isDark = localStorage.getItem('theme') === 'dark' ||
-      (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    setIsDarkMode(isDark);
-    if (isDark) {
-      document.documentElement.classList.add('dark');
+  useEffect( () => {
+    const isDark = localStorage.getItem( 'theme' ) === 'dark' ||
+      ( !localStorage.getItem( 'theme' ) && window.matchMedia( '(prefers-color-scheme: dark)' ).matches );
+    setIsDarkMode( isDark );
+    if ( isDark ) {
+      document.documentElement.classList.add( 'dark' );
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove( 'dark' );
     }
-  }, []);
+  }, [] );
 
   const toggleTheme = () => {
     const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    if (newDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+    setIsDarkMode( newDarkMode );
+    if ( newDarkMode ) {
+      document.documentElement.classList.add( 'dark' );
+      localStorage.setItem( 'theme', 'dark' );
     } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      document.documentElement.classList.remove( 'dark' );
+      localStorage.setItem( 'theme', 'light' );
     }
   };
 
-  useEffect(() => {
+  useEffect( () => {
     const loadData = async () => {
-      setLoading(true);
-      setError(null);
+      setLoading( true );
+      setError( null );
       try {
-        if (activeTab === 'surah') {
+        if ( activeTab === 'surah' ) {
           const data = await fetchSurahs();
-          setSurahs(data);
-          if (selectedSuraIndex === null && data.length > 0) {
-            setSelectedSuraIndex(data[0].suraIndex);
+          setSurahs( data );
+          if ( selectedSuraIndex === null && data.length > 0 ) {
+            setSelectedSuraIndex( data[ 0 ].suraIndex );
           }
         } else {
           const data = await fetchParas();
-          setParas(data);
-          if (selectedParaNo === null && data.length > 0) {
-            setSelectedParaNo(data[0].para_no);
+          setParas( data );
+          if ( selectedParaNo === null && data.length > 0 ) {
+            setSelectedParaNo( data[ 0 ].para_no );
           }
         }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load data');
+      } catch ( err ) {
+        setError( err instanceof Error ? err.message : 'Failed to load data' );
       } finally {
-        setLoading(false);
+        setLoading( false );
       }
     };
     loadData();
-  }, [activeTab]);
+  }, [ activeTab ] );
 
-  const handleTabChange = (value: string) => {
-    setActiveTab(value as QuranType);
-    setSelectedSuraIndex(null);
-    setSelectedParaNo(null);
+  const handleTabChange = ( value: string ) => {
+    setActiveTab( value as QuranType );
+    setSelectedSuraIndex( null );
+    setSelectedParaNo( null );
   };
 
-  const handleSurahSelect = (suraIndex: number) => {
-    setSelectedSuraIndex(suraIndex);
+  const handleSurahSelect = ( suraIndex: number ) => {
+    setSelectedSuraIndex( suraIndex );
   };
 
-  const handleParaSelect = (paraNo: number) => {
-    setSelectedParaNo(paraNo);
+  const handleParaSelect = ( paraNo: number ) => {
+    setSelectedParaNo( paraNo );
   };
 
   return (
@@ -284,11 +284,11 @@ export function QuranSidebar({ initialType }: QuranSidebarProps) {
                 <SidebarGroup>
                   <SidebarGroupLabel>Surahs (114)</SidebarGroupLabel>
                   <SidebarMenu>
-                    {surahs.map((surah) => (
+                    {surahs.map( ( surah ) => (
                       <SidebarMenuItem key={surah.suraIndex}>
                         <SidebarMenuButton asChild isActive={selectedSuraIndex === surah.suraIndex}>
                           <button
-                            onClick={() => handleSurahSelect(surah.suraIndex)}
+                            onClick={() => handleSurahSelect( surah.suraIndex )}
                             className="w-full text-left flex justify-between items-center"
                           >
                             <span>{surah.surah_name}</span>
@@ -296,7 +296,7 @@ export function QuranSidebar({ initialType }: QuranSidebarProps) {
                           </button>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
-                    ))}
+                    ) )}
                   </SidebarMenu>
                 </SidebarGroup>
               )}
@@ -305,11 +305,11 @@ export function QuranSidebar({ initialType }: QuranSidebarProps) {
                 <SidebarGroup>
                   <SidebarGroupLabel>Paras (30)</SidebarGroupLabel>
                   <SidebarMenu>
-                    {paras.map((para) => (
+                    {paras.map( ( para ) => (
                       <SidebarMenuItem key={para.para_no}>
                         <SidebarMenuButton asChild isActive={selectedParaNo === para.para_no}>
                           <button
-                            onClick={() => handleParaSelect(para.para_no)}
+                            onClick={() => handleParaSelect( para.para_no )}
                             className="w-full text-left"
                           >
                             <div className="flex flex-col">
@@ -320,7 +320,7 @@ export function QuranSidebar({ initialType }: QuranSidebarProps) {
                           </button>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
-                    ))}
+                    ) )}
                   </SidebarMenu>
                 </SidebarGroup>
               )}

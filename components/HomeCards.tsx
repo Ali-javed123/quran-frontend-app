@@ -38,12 +38,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { BookOpen, Layers } from 'lucide-react';
 
 export function HomeCards() {
   return (
-    <div className="grid gap-6 md:grid-cols-2 max-w-3xl w-full px-4">
+    <div className="grid gap-6 md:grid-cols-2 max-w-full w-full px-4">
       <Link href="/quran/surah" className="transition-transform hover:scale-105">
         <Card className="h-full cursor-pointer border-2 hover:border-emerald-500 dark:hover:border-emerald-400 bg-card">
           <CardHeader>

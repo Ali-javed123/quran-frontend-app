@@ -5,7 +5,7 @@ import {
   ParaDetailResponse,
   SurahPageResponse,
   ParaPageResponse,
-} from "@/types/quran"
+} from "../types/quran";
 
 const BASE_URL = "http://quran-backend-pink.vercel.app/api/quran"
 

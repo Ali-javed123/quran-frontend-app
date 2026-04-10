@@ -1,8 +1,8 @@
 // app/layout.tsx
 import './globals.css';
-import { ThemeProvider } from "@/components/theme-provider";
-import { cn } from "@/lib/utils";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { ThemeProvider } from "../components/theme-provider";
+import { cn } from "../lib/utils";
+import { SidebarProvider } from "../components/ui/sidebar";
 
 // 🔹 Dynamic import of fonts
 import { Amiri as AmiriFont, Geist as GeistFont } from "next/font/google";

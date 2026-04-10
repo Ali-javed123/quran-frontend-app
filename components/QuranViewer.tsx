@@ -333,10 +333,10 @@ import {
   fetchParaAyahsPaginated,
   fetchSurahMeta,
   fetchParaMeta,
-} from '@/lib/api';
-import { Ayah } from '@/types/quran';
+} from '../lib/api';
+import { Ayah } from '../types/quran';
 import { Loader2, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
-import '@/styles/tajweed.css';
+import '../styles/tajweed.css';
 
 interface QuranViewerProps {
   type: 'surah' | 'para';
