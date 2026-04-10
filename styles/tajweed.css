@@ -1,0 +1,231 @@
+/* 
+.arabic-text {
+  font-family:
+    "Uthmanic Script", "Traditional Arabic", "Amiri", "Scheherazade New", serif;
+  line-height: 2.2;
+  font-size: 55px;
+  font-weight: 800;
+}
+
+
+tajweed.ham_wasl {
+  color: #ccff00; 
+  font-weight: 800;
+  font-size: 55px;
+}
+
+tajweed.laam_shamsiyah {
+  color: green; 
+  font-weight: 800;
+  font-size: 55px;
+}
+
+tajweed.madda_normal {
+  color: skyblue; 
+  font-weight: 800;
+  font-size: 55px;
+}
+
+tajweed.madda_permissible {
+  color: #6ac90b; 
+  font-weight: 800;
+  font-size: 55px;
+}
+
+tajweed.ikhfa {
+  color: #9c27b0; 
+  font-weight: 800;
+  font-size: 55px;
+}
+
+tajweed.idgham {
+  color: red; 
+  font-weight: 800;
+  font-size: 55px;
+}
+
+tajweed.iqlab {
+  color: #666600; 
+  font-weight: 800;
+  font-size: 55px;
+}
+
+tajweed.ghunnah {
+  color: #990033; 
+  font-weight: 800;
+  font-size: 55px;
+}
+
+tajweed.qalqalah {
+  color: #ff6600; 
+  font-weight: 800;
+  font-size: 55px;
+}
+
+
+span.end {
+  display: inline-block;
+  width: 1.8em;
+  height: 1.8em;
+  background-color: #2e7d32;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.8em;
+  font-size: 0.7em;
+  margin-right: 0.3em;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+
+.dark span.end {
+  background-color: #4caf50;
+  color: #1e1e1e;
+}
+
+
+@media (max-width: 640px) {
+  .arabic-text {
+    font-size: 1.5rem;
+  }
+  span.end {
+    width: 1.4em;
+    height: 1.4em;
+    line-height: 1.4em;
+    font-size: 0.6em;
+  }
+} */
+/* Base Arabic font */
+.font-arabic {
+  font-family:
+    "Uthmanic Script", "Traditional Arabic", "Amiri", "Scheherazade New", serif;
+  line-height: 2.2;
+
+  font-size: 45px;
+  font-weight: 800;
+}
+
+.arabic-text {
+  direction: rtl;
+  text-align: right;
+}
+
+.tajweed-izhar {
+  color: #2e7d32;
+}
+.tajweed-idgham-gunnah {
+  color: #1565c0;
+}
+.tajweed-idgham-no-gunnah {
+  color: #0d47a1;
+}
+.tajweed-iqlab {
+  color: #6a1b9a;
+}
+.tajweed-ikhfa {
+  color: #e65100;
+}
+
+.tajweed-ikhfa-shafawi {
+  color: #ff8c00;
+}
+.tajweed-idgham-shafawi {
+  color: #00838f;
+}
+.tajweed-izhar-shafawi {
+  color: #2e7d32;
+}
+
+.tajweed-qalqalah {
+  color: #0097a7;
+}
+
+.tajweed-madd-asli {
+  color: rgb(245, 11, 50);
+}
+.tajweed-madd-fari {
+  color: green;
+}
+
+.tajweed-ghunnah {
+  color: rgb(226, 7, 44);
+}
+
+.tajweed-laam-tafkheem {
+  color: cyan;
+}
+.tajweed-laam-tarqeeq {
+  color: rgb(1, 113, 218);
+}
+
+.tajweed-raa-heavy {
+  color: #8b4513;
+}
+.tajweed-raa-light {
+  color: #8b4513;
+}
+
+.tajweed-waqf {
+  color: #795548;
+  font-weight: bold;
+
+  border-radius: 4px;
+  padding: 0 2px;
+  margin: 0 1px;
+}
+
+.tajweed-makharij-throat {
+  border-radius: 2px;
+  color: #8b4513;
+}
+
+.tajweed-sifaat-heavy {
+  font-weight: bold;
+  text-shadow: 0 0 0.5px #8b4513;
+  color: #8b4513;
+}
+
+span.end {
+  display: inline;
+  padding: 5px 10px;
+  background-color: #2e7d32;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.8em;
+  font-size: 15px !important;
+
+  margin: 0 0.1em;
+  font-family: sans-serif;
+  font-weight: 500;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
+.dark span.end {
+  background-color: #4caf50;
+  color: #1e1e1e;
+}
+
+.dark .tajweed-waqf {
+  color: #ffcc80;
+}
+
+.dark .tajweed-makharij-throat {
+  color: #8b4513;
+}
+
+@media (max-width: 640px) {
+  .arabic-text {
+    font-size: 1.5rem;
+  }
+  span.end {
+    width: 1.4em;
+    height: 1.4em;
+    line-height: 1.4em;
+    font-size: 0.6em;
+  }
+}
