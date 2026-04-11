@@ -667,8 +667,8 @@ export function QuranViewer( { type, id }: QuranViewerProps ) {
           }}
         >
           {/* Outer borders */}
-          <div className="absolute inset-[8px] pointer-events-none z-10 quran-inner-border-light" />
-          <div className="absolute inset-[4px] pointer-events-none z-10 quran-inner-border" />
+          <div className="absolute inset-[6px] pointer-events-none z-10 quran-inner-border-light" />
+          <div className="absolute inset-[3px] pointer-events-none z-10 quran-inner-border" />
 
           {/* ───────── TOP HEADER ───────── */}
           <div className="relative flex items-center justify-between px-3 md:px-6 py-2 quran-header-border quran-header-bg dark:quran-header-bg">
@@ -708,7 +708,8 @@ export function QuranViewer( { type, id }: QuranViewerProps ) {
 
                   {/* Ruku */}
                   {hasRuku && (
-                    <div className="ruku-container flex flex-col items-center">
+
+                    <div className="ruku-container flex flex-col items-center ">
                       <span className="text-xs font-bold text-quran-gold">
                         {ayah.ruku_surah || ''}
                       </span>
