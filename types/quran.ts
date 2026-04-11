@@ -53,10 +53,6 @@ export interface ParaDetailResponse {
   ayahs: Ayah[]
 }
 
-
-
-
-
 // Actual API response for surah pagination
 
 export interface SurahPageResponse {

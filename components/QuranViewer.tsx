@@ -1,105 +1,3 @@
-// 'use client';
-
-// import { useState, useEffect } from 'react';
-// import { fetchSurahAyahs, fetchParaAyahs } from '@/lib/api';
-// import { Ayah } from '@/types/quran';
-// import { Loader2, AlertCircle } from 'lucide-react';
-// import '@/styles/tajweed.css';
-
-// interface QuranViewerProps {
-//   type: 'surah' | 'para';
-//   id: number;
-// }
-
-// export function QuranViewer( { type, id }: QuranViewerProps ) {
-//   const [ ayahs, setAyahs ] = useState<Ayah[]>( [] );
-//   const [ loading, setLoading ] = useState( true );
-//   const [ error, setError ] = useState<string | null>( null );
-//   const [ title, setTitle ] = useState<string>( '' );
-
-//   useEffect( () => {
-//     const loadAyahs = async () => {
-//       setLoading( true );
-//       setError( null );
-//       try {
-//         if ( type === 'surah' ) {
-//           const response = await fetchSurahAyahs( id );
-//           setAyahs( response.ayahs );
-//           if ( response.ayahs.length > 0 ) {
-//             setTitle( `Surah ${response.ayahs[ 0 ].surah_name} (${response.ayahs[ 0 ].suraIndex})` );
-//           }
-//         } else {
-//           const response = await fetchParaAyahs( id );
-//           setAyahs( response.ayahs );
-//           if ( response.ayahs.length > 0 ) {
-//             setTitle( `Para ${id} - ${response.ayahs[ 0 ].para_name}` );
-//           }
-//         }
-//       } catch ( err ) {
-//         setError( err instanceof Error ? err.message : 'Failed to load ayahs' );
-//       } finally {
-//         setLoading( false );
-//       }
-//     };
-//     loadAyahs();
-//   }, [ type, id ] );
-
-//   // Safely render the HTML from textTajweed (trusted API)
-//   const renderAyahText = ( textTajweed: string ) => {
-//     return { __html: textTajweed };
-//   };
-
-//   if ( loading ) {
-//     return (
-//       <div className="flex justify-center items-center h-full min-h-screen">
-//         <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
-//       </div>
-//     );
-//   }
-
-//   if ( error ) {
-//     return (
-//       <div className="flex flex-col items-center justify-center h-full min-h-screen gap-4 text-destructive ">
-//         <AlertCircle className="h-12 w-12" />
-//         <p className="text-lg">{error}</p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="max-w-6xl mx-auto px-4 py-8 md:py-12 ml-[45px]">
-//       <div className="text-center mb-8 border-b pb-4">
-//         <h1 className="text-2xl md:text-3xl font-bold text-emerald-700 dark:text-emerald-400">
-//           {title}
-//         </h1>
-//         <p className="text-sm text-muted-foreground mt-2">
-//           {ayahs.length} Verses • Page {ayahs[ 0 ]?.page_no || '?'}
-//         </p>
-//       </div>
-
-//       <div className="quran-page space-y-6">
-//         {ayahs.map( ( ayah ) => (
-//           <div key={ayah._id} className="ayah-card p-4 rounded-lg bg-white/50 dark:bg-slate-800/50 shadow-sm">
-//             {/* Bismillah if present */}
-//             {ayah.bismillah && (
-//               <div className="bismillah text-right mb-4 text-2xl md:text-3xl font-arabic text-emerald-600 dark:text-emerald-400">
-//                 <div dangerouslySetInnerHTML={{ __html: ayah.bismillah || ayah.bismillah }} />
-//               </div>
-//             )}
-//             {/* Ayah text with Tajweed coloring */}
-//             <div className="arabic-text text-right font-arabic text-3xl md:text-4xl leading-loose">
-//               <div dangerouslySetInnerHTML={renderAyahText( ayah.textTajweed )} />
-//             </div>
-//             <div className="mt-2 text-left text-xs text-muted-foreground">
-//               Verse {ayah.ayaIndex} • Page {ayah.page_no}
-//             </div>
-//           </div>
-//         ) )}
-//       </div>
-//     </div>
-//   );
-// }
-
 
 // 'use client';
 
@@ -750,125 +648,135 @@ export function QuranViewer( { type, id }: QuranViewerProps ) {
   //   </div>
   // );
   return (
-    <div className="flex justify-center items-start min-h-screen bg-quran-page-bg dark:bg-quran-page-bg-dark transition-colors duration-300 py-4 px-2">
+    <>
+      {
+        loading && (
+          <div className="absolute inset-0 bg-white/40 dark:bg-black/40 flex items-center justify-center z-50">
+            <Loader2 className="h-8 w-8 animate-spin text-emerald-700" />
+          </div>
+        )
+      }
 
-      {/* Quran Page Container */}
-      <div
-        className="relative w-full max-w-[95%] md:max-w-[85%] lg:max-w-[75%] quran-paper dark:bg-quran-paper-dark shadow-2xl transition-all duration-300"
-        style={{
-          border: '3px solid var(--quran-gold)',
-          fontFamily: "'Scheherazade New', 'KFGQPC Uthman Taha Naskh', serif",
-        }}
-      >
-        {/* Outer borders */}
-        <div className="absolute inset-[6px] pointer-events-none z-10 quran-inner-border-light" />
-        <div className="absolute inset-[2px] pointer-events-none z-10 quran-inner-border" />
+      <div className="flex justify-center items-start min-h-screen  transition-colors duration-300 py-4 px-2">
 
-        {/* ───────── TOP HEADER ───────── */}
-        <div className="relative flex items-center justify-between px-3 md:px-6 py-2 quran-header-border quran-header-bg dark:quran-header-bg">
+        {/* Quran Page Container */}
+        <div
+          className="relative w-full max-w-[95%] md:max-w-[85%] lg:max-w-[75%] quran-paper dark:bg-quran-paper-dark shadow-2xl transition-all duration-300"
+          style={{
+            border: '3px solid var(--quran-gold)',
+            fontFamily: "'Scheherazade New', 'KFGQPC Uthman Taha Naskh', serif",
+          }}
+        >
+          {/* Outer borders */}
+          <div className="absolute inset-[6px] pointer-events-none z-10 quran-inner-border-light" />
+          <div className="absolute inset-[2px] pointer-events-none z-10 quran-inner-border" />
 
-          {/* Surah Name */}
-          <div
-            className="text-quran-text dark:text-quran-text-dark text-lg md:text-2xl lg:text-[30px] font-bold"
-            style={{ direction: 'rtl', minWidth: 60 }}
-          >
-            {surahName || title}
+          {/* ───────── TOP HEADER ───────── */}
+          <div className="relative flex items-center justify-between px-3 md:px-6 py-2 quran-header-border quran-header-bg dark:quran-header-bg">
+
+            {/* Surah Name */}
+            <div
+              className="text-quran-text dark:text-quran-text-dark text-lg md:text-2xl lg:text-[30px] font-bold"
+              style={{ direction: 'rtl', minWidth: 60 }}
+            >
+              {surahName || title}
+            </div>
+
+            {/* Page Number */}
+            <div
+              className="flex items-center justify-center w-8 h-6 md:w-10 md:h-7 rounded-full border text-xs md:text-sm font-bold quran-page-number"
+            >
+              {currentPage}
+            </div>
+
+            {/* Para Name */}
+            <div
+              className="text-quran-text dark:text-quran-text-dark text-lg md:text-2xl lg:text-[28px] font-bold text-right"
+              style={{ direction: 'rtl', minWidth: 60 }}
+            >
+              {paraName}
+            </div>
           </div>
 
-          {/* Page Number */}
-          <div
-            className="flex items-center justify-center w-8 h-6 md:w-10 md:h-7 rounded-full border text-xs md:text-sm font-bold quran-page-number"
-          >
-            {currentPage}
+          {/* ───────── AYAH CONTENT ───────── */}
+          <div className="relative px-3 md:px-10 py-4" dir="rtl">
+
+            {ayahs.map( ( ayah ) => {
+              const hasRuku = !!( ayah.ruku_para || ayah.ruku_surah );
+
+              return (
+                <div key={ayah._id} className="relative">
+
+                  {/* Ruku */}
+                  {hasRuku && (
+                    <div className="ruku-container flex flex-col items-center">
+                      <span className="text-xs font-bold text-quran-gold">
+                        {ayah.ruku_surah || ''}
+                      </span>
+
+                      <span className="text-2xl md:text-3xl font-bold text-quran-gold">
+                        ع
+                      </span>
+
+                      <span className="text-xs font-bold text-quran-gold">
+                        {ayah.ruku_para || ''}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Bismillah */}
+                  {ayah.bismillah && (
+                    <div className="text-center my-3 text-lg md:text-2xl text-quran-bismillah dark:text-quran-bismillah-dark">
+                      <div dangerouslySetInnerHTML={{ __html: ayah.bismillah }} />
+                    </div>
+                  )}
+
+                  {/* Ayah Text */}
+                  <span
+                    className="quran-ayat-text font-bold leading-[2.4] text-quran-text dark:text-quran-text-dark"
+                    style={{ fontFamily: "'Scheherazade New', serif" }}
+                  >
+                    <span dangerouslySetInnerHTML={{ __html: ayah.textTajweed }} />
+                  </span>
+
+                </div>
+              );
+            } )}
+
           </div>
 
-          {/* Para Name */}
-          <div
-            className="text-quran-text dark:text-quran-text-dark text-lg md:text-2xl lg:text-[28px] font-bold text-right"
-            style={{ direction: 'rtl', minWidth: 60 }}
-          >
-            {paraName}
+          {/* ───────── FOOTER ───────── */}
+          <div className="flex items-center justify-between px-3 md:px-6 py-3 quran-footer-border quran-footer-bg dark:quran-footer-bg">
+
+            {/* Prev */}
+            <button
+              onClick={handleNext}
+              disabled={!hasNextPage}
+              className="flex items-center gap-1 text-sm font-bold text-quran-text dark:text-quran-text-dark disabled:opacity-30"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Next
+            </button>
+
+            {/* Center */}
+            <div className="text-sm md:text-base font-bold text-quran-text dark:text-quran-text-dark text-center">
+              {manzil || `صفحہ ${currentPage}`}
+            </div>
+
+            {/* Next */}
+            <button
+              onClick={handlePrev}
+              disabled={!hasPrevPage}
+              className="flex items-center gap-1 text-sm font-bold text-quran-text dark:text-quran-text-dark disabled:opacity-30"
+            >
+              Prev
+              <ChevronRight className="w-4 h-4" />
+            </button>
+
           </div>
-        </div>
-
-        {/* ───────── AYAH CONTENT ───────── */}
-        <div className="relative px-3 md:px-10 py-4" dir="rtl">
-
-          {ayahs.map( ( ayah ) => {
-            const hasRuku = !!( ayah.ruku_para || ayah.ruku_surah );
-
-            return (
-              <div key={ayah._id} className="relative">
-
-                {/* Ruku */}
-                {hasRuku && (
-                  <div className="ruku-container flex flex-col items-center">
-                    <span className="text-xs font-bold text-quran-gold">
-                      {ayah.ruku_surah || ''}
-                    </span>
-
-                    <span className="text-2xl md:text-3xl font-bold text-quran-gold">
-                      ع
-                    </span>
-
-                    <span className="text-xs font-bold text-quran-gold">
-                      {ayah.ruku_para || ''}
-                    </span>
-                  </div>
-                )}
-
-                {/* Bismillah */}
-                {ayah.bismillah && (
-                  <div className="text-center my-3 text-lg md:text-2xl text-quran-bismillah dark:text-quran-bismillah-dark">
-                    <div dangerouslySetInnerHTML={{ __html: ayah.bismillah }} />
-                  </div>
-                )}
-
-                {/* Ayah Text */}
-                <span
-                  className="quran-ayat-text font-bold leading-[2.4] text-quran-text dark:text-quran-text-dark"
-                  style={{ fontFamily: "'Scheherazade New', serif" }}
-                >
-                  <span dangerouslySetInnerHTML={{ __html: ayah.textTajweed }} />
-                </span>
-
-              </div>
-            );
-          } )}
-
-        </div>
-
-        {/* ───────── FOOTER ───────── */}
-        <div className="flex items-center justify-between px-3 md:px-6 py-3 quran-footer-border quran-footer-bg dark:quran-footer-bg">
-
-          {/* Prev */}
-          <button
-            onClick={handleNext}
-            disabled={!hasNextPage}
-            className="flex items-center gap-1 text-sm font-bold text-quran-text dark:text-quran-text-dark disabled:opacity-30"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Next
-          </button>
-
-          {/* Center */}
-          <div className="text-sm md:text-base font-bold text-quran-text dark:text-quran-text-dark text-center">
-            {manzil || `صفحہ ${currentPage}`}
-          </div>
-
-          {/* Next */}
-          <button
-            onClick={handlePrev}
-            disabled={!hasPrevPage}
-            className="flex items-center gap-1 text-sm font-bold text-quran-text dark:text-quran-text-dark disabled:opacity-30"
-          >
-            Prev
-            <ChevronRight className="w-4 h-4" />
-          </button>
-
         </div>
       </div>
-    </div>
+    </>
   );
 }
 // components/QuranViewer.tsx
