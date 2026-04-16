@@ -1,782 +1,193 @@
-// 'use client';
-
-// import { useState, useEffect, useCallback, useRef } from 'react';
-// import {
-//   fetchSurahAyahsPaginated,
-//   fetchParaAyahsPaginated,
-//   fetchSurahMeta,
-//   fetchParaMeta,
-// } from '@/lib/api';
-// import { Ayah } from '@/types/quran';
-// import { Loader2, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
-// import '@/styles/tajweed.css';
-
-// interface QuranViewerProps {
-//   type: 'surah' | 'para';
-//   id: number;
-// }
-
-// export function QuranViewer( { type, id }: QuranViewerProps ) {
-//   const [ ayahs, setAyahs ] = useState<Ayah[]>( [] );
-//   const [ loading, setLoading ] = useState( true );
-//   const [ error, setError ] = useState<string | null>( null );
-//   const [ title, setTitle ] = useState<string>( '' );
-
-//   const [ currentPage, setCurrentPage ] = useState<number>( 1 );
-//   const [ totalPages, setTotalPages ] = useState<number>( 1 );
-//   const [ startPage, setStartPage ] = useState<number>( 1 );
-
-//   const abortControllerRef = useRef<AbortController | null>( null );
-
-//   // Next start page helper to calculate total pages
-//   const getNextStartPage = async ( currentId: number, type: 'surah' | 'para' ) => {
-//     try {
-//       if ( type === 'surah' ) {
-//         const nextMeta = await fetchSurahMeta( currentId + 1 );
-//         return nextMeta.startPage || 605;
-//       } else {
-//         const nextMeta = await fetchParaMeta( currentId + 1 );
-//         return nextMeta.startPage || 605;
-//       }
-//     } catch {
-//       return 605; // Last page of Quran
-//     }
-//   };
-
-//   // Load meta and calculate total pages
-//   const loadMeta = useCallback( async ( signal: AbortSignal ) => {
-//     try {
-//       let metaStartPage: number;
-//       let itemName: string;
-
-//       if ( type === 'surah' ) {
-//         const meta = await fetchSurahMeta( id );
-//         metaStartPage = meta.startPage || 1;
-//         itemName = `Surah ${meta.surah_name || ''} (${id})`;
-//       } else {
-//         const meta = await fetchParaMeta( id );
-//         metaStartPage = meta.startPage || 1;
-//         itemName = `Para ${id} - ${meta.paraName || ''}`;
-//       }
-
-//       if ( signal.aborted ) return;
-
-//       setStartPage( metaStartPage );
-//       setCurrentPage( metaStartPage );
-//       setTitle( itemName );
-
-//       const nextStartPage = await getNextStartPage( id, type );
-//       const total = nextStartPage - metaStartPage;
-//       setTotalPages( total > 0 ? metaStartPage + total - 1 : metaStartPage );
-
-//       return metaStartPage;
-//     } catch ( err ) {
-//       if ( !signal.aborted ) throw err;
-//     }
-//   }, [ type, id ] );
-
-//   // Load ayahs for specific page
-//   const loadAyahs = useCallback( async ( page: number, signal: AbortSignal ) => {
-//     setLoading( true );
-//     setError( null );
-
-//     try {
-//       let res;
-//       if ( type === 'surah' ) {
-//         res = await fetchSurahAyahsPaginated( id, page );
-//       } else {
-//         res = await fetchParaAyahsPaginated( id, page );
-//       }
-
-//       if ( signal.aborted ) return;
-
-//       setAyahs( res.ayahs || [] );
-//       setCurrentPage( page );
-//     } catch ( err ) {
-//       if ( !signal.aborted ) setError( err instanceof Error ? err.message : 'Failed to load ayahs' );
-//     } finally {
-//       if ( !signal.aborted ) setLoading( false );
-//     }
-//   }, [ type, id ] );
-
-//   // Initial load
-//   useEffect( () => {
-//     const init = async () => {
-//       if ( abortControllerRef.current ) abortControllerRef.current.abort();
-//       const controller = new AbortController();
-//       abortControllerRef.current = controller;
-//       const signal = controller.signal;
-
-//       setLoading( true );
-//       setError( null );
-
-//       try {
-//         const firstPage = await loadMeta( signal );
-//         await loadAyahs( firstPage ?? 1, signal );
-//       } catch ( err ) {
-//         if ( !signal.aborted ) {
-//           setError( err instanceof Error ? err.message : 'Failed to load' );
-//           setLoading( false );
-//         }
-//       }
-//     };
-
-//     init();
-
-//     return () => {
-//       if ( abortControllerRef.current ) abortControllerRef.current.abort();
-//     };
-//   }, [ id, type, loadMeta, loadAyahs ] );
-
-//   const handleNext = () => {
-//     if ( currentPage < totalPages ) {
-//       const controller = new AbortController();
-//       abortControllerRef.current = controller;
-//       loadAyahs( currentPage + 1, controller.signal );
-//     }
-//   };
-
-//   const handlePrev = () => {
-//     if ( currentPage > startPage ) {
-//       const controller = new AbortController();
-//       abortControllerRef.current = controller;
-//       loadAyahs( currentPage - 1, controller.signal );
-//     }
-//   };
-
-//   if ( loading && ayahs.length === 0 ) {
-//     return (
-//       <div className="flex justify-center items-center h-full min-h-screen">
-//         <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
-//       </div>
-//     );
-//   }
-
-//   if ( error ) {
-//     return (
-//       <div className="flex flex-col items-center justify-center h-full min-h-screen gap-4 text-destructive">
-//         <AlertCircle className="h-12 w-12" />
-//         <p className="text-lg">{error}</p>
-//         <button
-//           onClick={() => window.location.reload()}
-//           className="px-4 py-2 bg-emerald-600 text-white rounded"
-//         >
-//           Retry
-//         </button>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="max-w-6xl mx-auto px-4 py-8 md:py-12 ml-[45px]">
-//       {/* Header */}
-//       <div className="text-center mb-8 border-b pb-4">
-//         <h1 className="text-2xl md:text-3xl font-bold text-emerald-700">{title}</h1>
-//         <p className="text-sm text-muted-foreground mt-2">
-//           {ayahs.length} Verses • Page {currentPage} of {totalPages}
-//         </p>
-//       </div>
-
-//       {/* Ayah list */}
-//       <div className="quran-page space-y-6">
-//         {ayahs.map( ( ayah ) => (
-//           <div
-//             key={ayah._id}
-//             className="ayah-card p-4 rounded-lg bg-white/50 dark:bg-slate-800/50 shadow-sm"
-//           >
-//             {ayah.bismillah && (
-//               <div className="text-right mb-4 text-2xl font-arabic text-emerald-600">
-//                 <div dangerouslySetInnerHTML={{ __html: ayah.bismillah }} />
-//               </div>
-//             )}
-//             <div className="text-right font-arabic text-3xl leading-loose">
-//               <div dangerouslySetInnerHTML={{ __html: ayah.textTajweed }} />
-//             </div>
-//             <div className="mt-2 text-left text-xs text-muted-foreground">
-//               Verse {ayah.ayaIndex} • Page {ayah.page_no}
-//             </div>
-//           </div>
-//         ) )}
-//       </div>
-
-//       {/* Pagination controls */}
-//       <div className="flex justify-center gap-4 mt-8">
-//         <button
-//           onClick={handlePrev}
-//           disabled={currentPage <= startPage}
-//           className="px-4 py-2 bg-emerald-600 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-1"
-//         >
-//           <ChevronLeft className="w-4 h-4" /> Previous
-//         </button>
-//         <span className="px-4 py-2 text-muted-foreground">
-//           Page {currentPage} / {totalPages}
-//         </span>
-//         <button
-//           onClick={handleNext}
-//           disabled={currentPage >= totalPages}
-//           className="px-4 py-2 bg-emerald-600 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-1"
-//         >
-//           Next <ChevronRight className="w-4 h-4" />
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
+// components/QuranViewer.tsx — FIX: No setTimeout, proper ready-based flow
 
 'use client';
+
 import { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  fetchSurahAyahsPaginated,
-  fetchParaAyahsPaginated,
-  fetchSurahMeta,
-  fetchParaMeta,
-} from '../lib/api';
-import { Ayah } from '../types/quran';
-import { Loader2, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { fetchSurahAyahsPaginated, fetchParaAyahsPaginated, fetchSurahMeta, fetchParaMeta } from '../lib/api';
+import { Ayah, VerificationResultData, RecitationError } from '../types/ayahs';
+import { Loader2, AlertCircle, ChevronLeft, ChevronRight, Mic, MicOff, WifiOff } from 'lucide-react';
+import { useRecitationChecker } from '../hooks/useRecitationChecker';
+import { useToast } from '../hooks/useToast';
+import { Toast } from './Toast';
 import '../styles/tajweed.css';
 
-interface QuranViewerProps {
-  type: 'surah' | 'para';
-  id: number;
-}
+interface QuranViewerProps { type: 'surah' | 'para'; id: number; }
+interface PaginationState { currentPage: number; startPage: number; totalPages: number; hasNextPage: boolean; hasPrevPage: boolean; }
 
-export function QuranViewer( { type, id }: QuranViewerProps ) {
-  const [ ayahs, setAyahs ] = useState<Ayah[]>( [] );
-  const [ loading, setLoading ] = useState( true );
-  const [ error, setError ] = useState<string | null>( null );
-  const [ title, setTitle ] = useState<string>( '' );
-  const [ surahName, setSurahName ] = useState<string>( '' );
-  const [ paraName, setParaName ] = useState<string>( '' );
-  const [ manzil, setManzil ] = useState<string>( '' );
-  const [ currentPage, setCurrentPage ] = useState<number>( 1 );
-  const [ totalPages, setTotalPages ] = useState<number>( 1 );
-  const [ startPage, setStartPage ] = useState<number>( 1 );
-  const [ hasNextPage, setHasNextPage ] = useState( true );
-  const [ hasPrevPage, setHasPrevPage ] = useState( false );
-  const latestRequestRef = useRef<number>( 0 );
-  const abortControllerRef = useRef<AbortController | null>( null );
+export function QuranViewer({ type, id }: QuranViewerProps) {
+  const [ayahs, setAyahs] = useState<Ayah[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [surahName, setSurahName] = useState('');
+  const [paraName, setParaName] = useState('');
+  const [manzil, setManzil] = useState('');
+  const [title, setTitle] = useState('');
+  const [recordingAyahId, setRecordingAyahId] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationState>({ currentPage: 1, startPage: 1, totalPages: 1, hasNextPage: true, hasPrevPage: false });
 
-  const getNextStartPage = async ( currentId: number, type: 'surah' | 'para' ) => {
-    try {
-      if ( type === 'surah' ) {
-        const nextMeta = await fetchSurahMeta( currentId + 1 );
-        return nextMeta.startPage || 605;
-      } else {
-        const nextMeta = await fetchParaMeta( currentId + 1 );
-        return nextMeta.startPage || 605;
-      }
-    } catch {
-      return 605;
-    }
+  const { isConnected, isRecording, isLoading: isRecitationLoading, currentAccuracy, activeAyahId, connectionError, reconnect, startRecitation, startRecording, stopRecording, cancelRecitation, onVerificationResult, onError } = useRecitationChecker();
+  const { toasts, addToast, removeToast } = useToast();
+  const latestRequestRef = useRef<number>(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    // onVerificationResult((data: VerificationResultData) => {
+    //   if (data.isPerfect) { addToast('success', '🎉 بالکل صحیح!', 'ماشاء اللہ! آپ نے بالکل درست پڑھا', 4000); return; }
+    //   if (data.wrongWords?.length > 0) {
+    //     const lines = data.wrongWords.map((w) => {
+    //       if (w.errorType === 'deletion' || !w.userWord) return `➕ چھوٹا لفظ: «${w.correctWord}»`;
+    //       if (w.errorType === 'insertion' || !w.correctWord) return `➖ اضافی لفظ: «${w.userWord}»`;
+    //       return `❌ «${w.userWord}»  ←  ✅ «${w.correctWord}»`;
+    //     }).join('\n');
+    //     addToast('warning', `⚠️ ${data.wrongWords.length} غلطی — ${data.accuracy}% درست`, lines, 7000);
+    //   }
+    // });
+    onVerificationResult((data: VerificationResultData) => {
+  // ✅ Perfect — single success toast only
+  if (data.isPerfect) {
+    addToast('success', '✅ بالکل صحیح!', 'ماشاء اللہ!', 3000);
+    return;
+  }
+
+  // ❌ Wrong words — one error toast per wrong word (no warning/info)
+  if (data.wrongWords?.length > 0) {
+    data.wrongWords.forEach((w) => {
+      // Skip insertion/deletion noise — only real substitution errors
+      if (w.errorType === 'insertion' || w.errorType === 'deletion') return;
+      if (!w.userWord || !w.correctWord) return;
+
+      // Show both wrong and correct word in toast
+      const wrongDisplay   = w.userOriginal  || w.userWord;
+      const correctDisplay = w.correctOriginal || w.correctWord;
+      addToast('error', `❌ «${wrongDisplay}»  →  ✅ «${correctDisplay}»`, '', 4000);
+    });
+  }
+  // No warning/info toasts at all
+});
+    onError((err: RecitationError) => {
+      if (err.message?.includes('No active recitation') || err.message?.includes('not ready')) return;
+      addToast('error', 'خرابی', err.message, 4000);
+    });
+  }, [onVerificationResult, onError, addToast]);
+
+  const getNextStartPage = async (currentId: number, pageType: 'surah' | 'para') => {
+    try { const m = pageType === 'surah' ? await fetchSurahMeta(currentId + 1) : await fetchParaMeta(currentId + 1); return m.startPage || 605; } catch { return 605; }
   };
 
-  const loadMeta = useCallback( async ( signal: AbortSignal ) => {
+  const loadMeta = useCallback(async (signal: AbortSignal) => {
     try {
-      let metaStartPage: number;
-      let itemName: string;
-      let sName = '';
-      let pName = '';
-
-      if ( type === 'surah' ) {
-        const meta = await fetchSurahMeta( id );
-        metaStartPage = meta.startPage || 1;
-        sName = meta.surah_name || '';
-        pName = meta.paraName || `Para ${id}`;
-        itemName = `Surah ${sName} (${id})`;
-      } else {
-        const meta = await fetchParaMeta( id );
-        metaStartPage = meta.startPage || 1;
-        pName = meta.paraName || `Para ${id}`;
-        sName = meta.surah_name || '';
-        itemName = `Para ${id} - ${pName}`;
-      }
-
-      if ( signal.aborted ) return;
-      setStartPage( metaStartPage );
-      setCurrentPage( metaStartPage );
-      setTitle( itemName );
-      setSurahName( sName );
-      setParaName( pName );
-
-      // const nextStartPage = await getNextStartPage( id, type );
-      // const total = nextStartPage - metaStartPage;
-      // setTotalPages( total > 0 ? metaStartPage + total - 1 : metaStartPage );
-      const nextStartPage = await getNextStartPage( id, type );
-
-      // last page = next surah/para ka start - 1
-      const lastPage =
-        nextStartPage && nextStartPage > metaStartPage
-          ? nextStartPage - 1
-          : 605; // fallback (Quran total pages)
-
-      setTotalPages( lastPage );
+      let metaStartPage: number; let sName = '', pName = '', itemName = '';
+      if (type === 'surah') { const m = await fetchSurahMeta(id); metaStartPage = m.startPage || 1; sName = m.surah_name || ''; pName = m.paraName || `Para ${id}`; itemName = `Surah ${sName} (${id})`; }
+      else { const m = await fetchParaMeta(id); metaStartPage = m.startPage || 1; pName = m.paraName || `Para ${id}`; sName = m.surah_name || ''; itemName = `Para ${id} - ${pName}`; }
+      if (signal.aborted) return;
+      setPagination(prev => ({ ...prev, startPage: metaStartPage, currentPage: metaStartPage }));
+      setTitle(itemName); setSurahName(sName); setParaName(pName);
+      const nextStart = await getNextStartPage(id, type);
+      setPagination(prev => ({ ...prev, totalPages: nextStart > metaStartPage ? nextStart - 1 : 605 }));
       return metaStartPage;
-    } catch ( err ) {
-      if ( !signal.aborted ) throw err;
-    }
-  }, [ type, id ] );
+    } catch (err) { if (!signal.aborted) throw err; return 1; }
+  }, [type, id]);
 
-  const loadAyahs = useCallback( async ( page: number, signal: AbortSignal ) => {
-    setLoading( true );
-    setError( null );
-
-    const requestId = Date.now();
-    latestRequestRef.current = requestId;
-
+  const loadAyahs = useCallback(async (page: number, signal: AbortSignal) => {
+    setLoading(true); setError(null);
+    const reqId = Date.now(); latestRequestRef.current = reqId;
     try {
-      let res;
-
-      // =========================
-      // 1. CURRENT PAGE FETCH
-      // =========================
-      if ( type === 'surah' ) {
-        res = await fetchSurahAyahsPaginated( id, page );
-      } else {
-        res = await fetchParaAyahsPaginated( id, page );
-      }
-
-      if ( signal.aborted || latestRequestRef.current !== requestId ) return;
-
-      const fetchedAyahs: Ayah[] = res?.ayahs || [];
-
-      setAyahs( fetchedAyahs );
-      setCurrentPage( page );
-
-      // =========================
-      // 2. PREV + NEXT CHECK (SAFE)
-      // =========================
-      let nextExists = false;
-      let prevExists = false;
-
+      const res = type === 'surah' ? await fetchSurahAyahsPaginated(id, page) : await fetchParaAyahsPaginated(id, page);
+      if (signal.aborted || latestRequestRef.current !== reqId) return;
+      const fetched: Ayah[] = res?.ayahs || [];
+      setAyahs(fetched); setPagination(prev => ({ ...prev, currentPage: page }));
+      let nextExists = false, prevExists = false;
       try {
-        const [ nextRes, prevRes ] = await Promise.all( [
-          // NEXT PAGE CHECK
-          type === 'surah'
-            ? fetchSurahAyahsPaginated( id, page + 1 )
-            : fetchParaAyahsPaginated( id, page + 1 ),
+        const [nr, pr] = await Promise.all([
+          type === 'surah' ? fetchSurahAyahsPaginated(id, page + 1) : fetchParaAyahsPaginated(id, page + 1),
+          page > pagination.startPage ? (type === 'surah' ? fetchSurahAyahsPaginated(id, page - 1) : fetchParaAyahsPaginated(id, page - 1)) : Promise.resolve({ ayahs: [] }),
+        ]);
+        if (latestRequestRef.current === reqId) { nextExists = (nr?.ayahs?.length || 0) > 0; prevExists = page > pagination.startPage && (pr?.ayahs?.length || 0) > 0; }
+      } catch { }
+      setPagination(prev => ({ ...prev, hasNextPage: nextExists, hasPrevPage: prevExists }));
+      const mAyah = fetched.find(a => a.manzil); if (mAyah?.manzil) setManzil(`Manzil ${mAyah.manzil}`);
+      const first = fetched[0]; if (first?.surah_name) setSurahName(first.surah_name); if (first?.para_name) setParaName(first.para_name);
+    } catch (err) { if (!signal.aborted) setError(err instanceof Error ? err.message : 'Failed to load'); }
+    finally { if (!signal.aborted) setLoading(false); }
+  }, [type, id, pagination.startPage]);
 
-          // PREV PAGE CHECK
-          page > startPage
-            ? ( type === 'surah'
-              ? fetchSurahAyahsPaginated( id, page - 1 )
-              : fetchParaAyahsPaginated( id, page - 1 ) )
-            : Promise.resolve( { ayahs: [] } ),
-        ] );
-
-        if ( latestRequestRef.current === requestId ) {
-          nextExists = ( nextRes?.ayahs?.length || 0 ) > 0;
-          prevExists = page > startPage && ( prevRes?.ayahs?.length || 0 ) > 0;
-        }
-      } catch {
-        nextExists = false;
-        prevExists = false;
-      }
-
-      // =========================
-      // 3. UPDATE PAGINATION FLAGS
-      // =========================
-      setHasNextPage( nextExists );
-      setHasPrevPage( prevExists );
-
-      // =========================
-      // 4. META INFO UPDATE
-      // =========================
-      const manzilAyah = fetchedAyahs.find( ( a ) => a.manzil );
-      if ( manzilAyah?.manzil ) {
-        setManzil( `Manzil ${manzilAyah.manzil}` );
-      }
-
-      const firstAyah = fetchedAyahs[ 0 ];
-      if ( firstAyah ) {
-        if ( firstAyah.surah_name ) setSurahName( firstAyah.surah_name );
-        if ( firstAyah.para_name ) setParaName( firstAyah.para_name );
-      }
-
-    } catch ( err ) {
-      if ( !signal.aborted ) {
-        setError( err instanceof Error ? err.message : 'Failed to load ayahs' );
-      }
-    } finally {
-      if ( !signal.aborted ) setLoading( false );
-    }
-  }, [ type, id, startPage ] );
-  useEffect( () => {
+  useEffect(() => {
     const init = async () => {
-      if ( abortControllerRef.current ) abortControllerRef.current.abort();
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
-      const signal = controller.signal;
-      setLoading( true );
-      setError( null );
-      try {
-        const firstPage = await loadMeta( signal );
-        await loadAyahs( firstPage ?? 1, signal );
-      } catch ( err ) {
-        if ( !signal.aborted ) {
-          setError( err instanceof Error ? err.message : 'Failed to load' );
-          setLoading( false );
-        }
-      }
+      abortControllerRef.current?.abort();
+      const ctrl = new AbortController(); abortControllerRef.current = ctrl;
+      setLoading(true); setError(null);
+      try { const firstPage = await loadMeta(ctrl.signal); await loadAyahs(firstPage ?? 1, ctrl.signal); }
+      catch (err) { if (!ctrl.signal.aborted) { setError(err instanceof Error ? err.message : 'Failed to load'); setLoading(false); } }
     };
     init();
-    return () => {
-      if ( abortControllerRef.current ) abortControllerRef.current.abort();
-    };
-  }, [ id, type, loadMeta, loadAyahs ] );
+    return () => { abortControllerRef.current?.abort(); cancelRecitation(); };
+  }, [id, type]);
 
-  const handleNext = () => {
-    if ( !hasNextPage ) return;
+  const handleNext = () => { if (!pagination.hasNextPage) return; const ctrl = new AbortController(); abortControllerRef.current = ctrl; loadAyahs(pagination.currentPage + 1, ctrl.signal); };
+  const handlePrev = () => { if (!pagination.hasPrevPage) return; const ctrl = new AbortController(); abortControllerRef.current = ctrl; loadAyahs(pagination.currentPage - 1, ctrl.signal); };
 
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
-    loadAyahs( currentPage + 1, controller.signal );
+  const handleMicClick = async (ayah: Ayah) => {
+    const ayahId = ayah._id;
+    if (recordingAyahId === ayahId && isRecording) { stopRecording(); setRecordingAyahId(null); return; }
+    if (recordingAyahId && isRecording) stopRecording();
+    setRecordingAyahId(ayahId);
+    // ✅ FIX: No setTimeout. startRecording waits for recitation-ready internally.
+    startRecitation({ suraIndex: ayah.suraIndex, ayaIndex: ayah.ayaIndex, pageNo: ayah.page_no, paraNo: ayah.para_no }, ayahId);
+    await startRecording();
   };
 
-  const handlePrev = () => {
-    if ( !hasPrevPage ) return;
+  if (loading && ayahs.length === 0) return <div className="flex justify-center items-center h-full min-h-screen"><Loader2 className="h-8 w-8 animate-spin text-emerald-700" /></div>;
+  if (error) return <div className="flex flex-col items-center justify-center h-full min-h-screen gap-4"><AlertCircle className="h-12 w-12 text-red-500" /><p className="text-lg">{error}</p><button onClick={() => window.location.reload()} className="px-4 py-2 bg-emerald-700 text-white rounded">دوبارہ کوشش کریں</button></div>;
 
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
-    loadAyahs( currentPage - 1, controller.signal );
-  };
-
-  if ( loading && ayahs.length === 0 ) {
-    return (
-      <div className="flex justify-center items-center h-full min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-emerald-700" />
-      </div>
-    );
-  }
-
-  if ( error ) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full min-h-screen gap-4 text-destructive">
-        <AlertCircle className="h-12 w-12" />
-        <p className="text-lg">{error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-4 py-2 bg-emerald-700 text-white rounded"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
-  // return (
-  //   <div className="flex justify-center items-start min-h-screen bg-[#f5efe0] py-7 px-2">
-  //     {/* Quran Page Container */}
-  //     <div
-  //       className="relative w-full ml-32 max-w-[75%] bg-[#fdf8ee] shadow-2xl"
-  //       style={{
-  //         border: '3px solid #8B5E3C',
-  //         fontFamily: "'Scheherazade New', 'KFGQPC Uthman Taha Naskh', serif",
-  //       }}
-  //     >
-  //       {/* Outer decorative border */}
-  //       <div
-  //         className="absolute inset-[6px] pointer-events-none z-10"
-  //         style={{ border: '1px solid #c8a97e' }}
-  //       />
-  //       <div
-  //         className="absolute inset-[2px] pointer-events-none z-10"
-  //         style={{ border: '0.5px solid #e2c99a' }}
-  //       />
-
-  //       {/* ── TOP HEADER ── */}
-  //       <div
-  //         className="relative flex items-center justify-between px-6 py-2"
-  //         style={{
-  //           borderBottom: '2px solid #8B5E3C',
-  //           background: 'linear-gradient(to bottom, #f0e0c0, #fdf8ee)',
-  //         }}
-  //       >
-  //         {/* Top-left: Surah Name */}
-  //         <div
-  //           className="  text-[#5a3a1a]  !text-[30px] !font-bold"
-  //           style={{ fontFamily: "'Scheherazade New', serif", direction: 'rtl', minWidth: 80 }}
-  //         >
-  //           {surahName || title}
-  //         </div>
-
-  //         {/* Top-center: Page number in decorative oval */}
-  //         <div
-  //           className="flex items-center justify-center"
-  //           style={{
-  //             background: 'transparent',
-  //             border: '1.5px solid #8B5E3C',
-  //             borderRadius: '50%',
-  //             width: 38,
-  //             height: 28,
-
-  //             fontSize: 13,
-  //             color: '#5a3a1a',
-  //             fontWeight: 700,
-  //           }}
-  //         >
-  //           {currentPage}
-  //         </div>
-
-  //         {/* Top-right: Para Name */}
-  //         <div
-  //           className="!text-[36px] !font-bold text-[#5a3a1a] "
-  //           style={{ fontFamily: "'Scheherazade New', serif", direction: 'rtl', minWidth: 80, textAlign: 'left' }}
-  //         >
-  //           {paraName}
-  //         </div>
-  //       </div>
-
-  //       {/* ── AYAH CONTENT AREA ── */}
-  //       <div className="relative px-10 py-4" dir="rtl">
-  //         {ayahs.map( ( ayah ) => {
-  //           const hasRuku = !!( ayah.ruku_para || ayah.ruku_surah );
-  //           return (
-  //             <div key={ayah._id} className="relative">
-  //               {/* Ruku symbol on the LEFT (which is right in RTL = outside left margin) */}
-  //               {hasRuku && (
-  //                 <div
-  //                   className="absolute flex flex-col items-center"
-  //                   style={{
-  //                     left: -26,
-  //                     top: '50%',
-  //                     transform: 'translateY(-50%)',
-  //                   }}
-  //                 >
-  //                   {/* Ruku ع symbol */}
-  //                   <span
-  //                     style={{
-  //                       fontSize: 13,
-  //                       color: '#8B5E3C',
-  //                       fontWeight: 800,
-  //                       lineHeight: 1.2,
-  //                     }}
-  //                   >
-  //                     {ayah.ruku_surah || ayah.ruku_surah}
-  //                   </span>
-  //                   <span
-  //                     style={{
-  //                       fontFamily: "'Scheherazade New', serif",
-  //                       fontSize: 35,
-  //                       color: '#8B5E3C',
-  //                       lineHeight: 1,
-  //                       fontWeight: 900,
-  //                     }}
-  //                   >
-  //                     ع
-  //                   </span>
-  //                   {/* Ruku para number below symbol */}
-  //                   <span
-  //                     style={{
-  //                       fontSize: 13,
-  //                       color: '#8B5E3C',
-  //                       fontWeight: 800,
-  //                       lineHeight: 1.2,
-  //                     }}
-  //                   >
-  //                     {ayah.ruku_para || ayah.ruku_para}
-  //                   </span>
-  //                 </div>
-  //               )}
-
-  //               {/* Bismillah */}
-  //               {ayah.bismillah && (
-  //                 <div
-  //                   className="text-center my-3 text-2xl text-[#1a3a1a]"
-  //                   style={{ fontFamily: "'Scheherazade New', serif" }}
-  //                 >
-  //                   <div dangerouslySetInnerHTML={{ __html: ayah.bismillah }} />
-  //                 </div>
-  //               )}
-
-  //               {/* Ayah text — inline continuous flow like real Quran */}
-  //               <span
-  //                 className="text-[#1a1a1a] leading-[2.4] text-[42px] font-semi-bold"
-  //                 style={{ fontFamily: "'Scheherazade New', serif" }}
-  //               >
-  //                 <span dangerouslySetInnerHTML={{ __html: ayah.textTajweed }} />
-  //               </span>
-  //             </div>
-  //           );
-  //         } )}
-  //       </div>
-
-  //       {/* ── BOTTOM FOOTER ── */}
-  //       <div
-  //         className="flex items-center justify-between px-6 py-3"
-  //         style={{
-  //           borderTop: '2px solid #8B5E3C',
-  //           background: 'linear-gradient(to top, #f0e0c0, #fdf8ee)',
-  //         }}
-  //       >
-  //         {/* Bottom-left: prev page button */}
-  //         <button
-  //           onClick={handleNext}
-  //           // disabled={currentPage >= totalPages}
-  //           disabled={!hasNextPage}
-
-  //           className="flex items-center gap-1 text-sm text-[#5a3a1a] font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:text-[#8B5E3C] transition-colors"
-  //           style={{ direction: 'ltr' }}
-  //         >
-  //           <ChevronLeft className="w-4 h-4" />
-  //           Next
-  //         </button>
-
-  //         {/* Bottom-center: Manzil */}
-  //         <div
-  //           className="text-md text-[#5a3a1a] font-bold  text-center"
-  //           style={{ fontFamily: "'Scheherazade New', serif" }}
-  //         >
-  //           {manzil || `صفحہ ${currentPage}`}
-  //         </div>
-
-  //         {/* Bottom-right: prev button */}
-  //         <button
-  //           onClick={handlePrev}
-  //           // disabled={currentPage <= startPage}
-  //           disabled={!hasPrevPage}
-  //           className="flex items-center gap-1 text-md text-[#5a3a1a] font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:text-[#8B5E3C] transition-colors"
-  //           style={{ direction: 'ltr' }}
-  //         >
-  //           Pre
-  //           <ChevronRight className="w-4 h-4" />
-  //         </button>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
   return (
     <>
-      {
-        loading && (
-          <div className="absolute inset-0 bg-white/40 dark:bg-black/40 flex items-center justify-center z-50">
-            <Loader2 className="h-8 w-8 animate-spin text-emerald-700" />
-          </div>
-        )
-      }
+      <Toast toasts={toasts} onRemove={removeToast} />
+      {!isConnected && (<div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 bg-red-500 text-white px-4 py-2 rounded-full shadow-lg text-sm flex items-center gap-2"><WifiOff className="w-4 h-4" /><span>سرور سے کنکشن نہیں</span><button onClick={reconnect} className="ml-2 underline">دوبارہ جوڑیں</button></div>)}
+      {isRecording && recordingAyahId && (<div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 bg-emerald-600 text-white px-5 py-2 rounded-full shadow-lg text-sm flex items-center gap-2"><div className="w-2 h-2 bg-white rounded-full animate-pulse" /><span>🎤 سن رہا ہے{currentAccuracy > 0 ? ` — ${currentAccuracy}% درست` : '...'}</span></div>)}
+      {loading && (<div className="absolute inset-0 bg-white/40 dark:bg-black/40 flex items-center justify-center z-50"><Loader2 className="h-8 w-8 animate-spin text-emerald-700" /></div>)}
 
-      <div className="flex justify-center items-start min-h-screen  transition-colors duration-300 py-4 px-2">
-
-        {/* Quran Page Container */}
-        <div
-          className="relative w-full max-w-[95%] md:max-w-[85%] lg:max-w-[75%] quran-paper dark:bg-quran-paper-dark shadow-2xl transition-all duration-300"
-          style={{
-            border: '3px solid var(--quran-gold)',
-            fontFamily: "'Scheherazade New', 'KFGQPC Uthman Taha Naskh', serif",
-          }}
-        >
-          {/* Outer borders */}
+      <div className="flex justify-center items-start min-h-screen py-4 px-2">
+        <div className="relative w-full max-w-[95%] md:max-w-[85%] lg:max-w-[75%] quran-paper dark:bg-quran-paper-dark shadow-2xl" style={{ border: '3px solid var(--quran-gold)', fontFamily: "'Scheherazade New', serif" }}>
           <div className="absolute inset-[6px] pointer-events-none z-10 quran-inner-border-light" />
           <div className="absolute inset-[3px] pointer-events-none z-10 quran-inner-border" />
-
-          {/* ───────── TOP HEADER ───────── */}
-          <div className="relative flex items-center justify-between px-3 md:px-6 py-2 quran-header-border quran-header-bg dark:quran-header-bg">
-
-            {/* Surah Name */}
-            <div
-              className="text-quran-text dark:text-quran-text-dark text-lg md:text-2xl lg:text-[30px] font-bold"
-              style={{ direction: 'rtl', minWidth: 60 }}
-            >
-              {surahName || title}
-            </div>
-
-            {/* Page Number */}
-            <div
-              className="flex items-center justify-center w-8 h-6 md:w-10 md:h-7 rounded-full border text-xs md:text-sm font-bold quran-page-number"
-            >
-              {currentPage}
-            </div>
-
-            {/* Para Name */}
-            <div
-              className="text-quran-text dark:text-quran-text-dark text-lg md:text-2xl lg:text-[28px] font-bold text-right"
-              style={{ direction: 'rtl', minWidth: 60 }}
-            >
-              {paraName}
-            </div>
+          <div className="relative flex items-center justify-between px-3 md:px-6 py-2 quran-header-border quran-header-bg">
+            <div className="text-quran-text dark:text-quran-text-dark text-lg md:text-2xl lg:text-[30px] font-bold" style={{ direction: 'rtl', minWidth: 60 }}>{surahName || title}</div>
+            <div className="flex items-center justify-center w-8 h-6 md:w-10 md:h-7 rounded-full border text-xs md:text-sm font-bold quran-page-number">{pagination.currentPage}</div>
+            <div className="text-quran-text dark:text-quran-text-dark text-lg md:text-2xl lg:text-[28px] font-bold text-right" style={{ direction: 'rtl', minWidth: 60 }}>{paraName}</div>
           </div>
-
-          {/* ───────── AYAH CONTENT ───────── */}
           <div className="relative px-3 md:px-10 py-4" dir="rtl">
-
-            {ayahs.map( ( ayah ) => {
-              const hasRuku = !!( ayah.ruku_para || ayah.ruku_surah );
-
+            {ayahs.map((ayah: Ayah) => {
+              const hasRuku = !!(ayah.ruku_para || ayah.ruku_surah);
+              const isThisRecording = recordingAyahId === ayah._id && isRecording;
+              const isThisLoading = isRecitationLoading && activeAyahId === ayah._id;
               return (
-                <div key={ayah._id} className="relative">
-
-                  {/* Ruku */}
-                  {hasRuku && (
-
-                    <div className="ruku-container flex flex-col items-center ">
-                      <span className="text-xs font-bold text-quran-gold">
-                        {ayah.ruku_surah || ''}
-                      </span>
-
-                      <span className="text-2xl md:text-3xl font-bold text-quran-gold">
-                        ع
-                      </span>
-
-                      <span className="text-xs font-bold text-quran-gold">
-                        {ayah.ruku_para || ''}
-                      </span>
+                <div key={ayah._id} className="relative group mb-8">
+                  {hasRuku && (<div className="ruku-container flex flex-col items-center"><span className="text-xs font-bold text-quran-gold">{ayah.ruku_surah || ''}</span><span className="text-2xl md:text-3xl font-bold text-quran-gold">ع</span><span className="text-xs font-bold text-quran-gold">{ayah.ruku_para || ''}</span></div>)}
+                  {ayah.bismillah && (<div className="text-center my-3 text-lg md:text-2xl text-quran-bismillah dark:text-quran-bismillah-dark"><div dangerouslySetInnerHTML={{ __html: ayah.bismillah }} /></div>)}
+                  <div className="relative">
+                    <span className="quran-ayat-text font-bold leading-[2.4] text-quran-text dark:text-quran-text-dark" style={{ fontFamily: "'Scheherazade New', serif" }}><span dangerouslySetInnerHTML={{ __html: ayah.textTajweed }} /></span>
+                    <span className="inline-block mr-2 text-quran-gold text-lg font-bold">({ayah.ayaIndex})</span>
+                  </div>
+                  <button onClick={() => handleMicClick(ayah)} disabled={isThisLoading && !isThisRecording} title={isThisRecording ? 'روکیں' : 'تلاوت شروع کریں'}
+                    className={`absolute -right-10 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 p-2 rounded-full shadow-lg hover:scale-110 ${isThisRecording ? 'bg-red-500 hover:bg-red-600 animate-pulse opacity-100' : 'bg-emerald-500 hover:bg-emerald-600'} disabled:opacity-40 disabled:cursor-not-allowed`}>
+                    {isThisLoading && !isThisRecording ? <Loader2 className="w-4 h-4 text-white animate-spin" /> : isThisRecording ? <MicOff className="w-4 h-4 text-white" /> : <Mic className="w-4 h-4 text-white" />}
+                  </button>
+                  {isThisRecording && currentAccuracy > 0 && (
+                    <div className="absolute -left-12 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full px-2 py-1 shadow-md border">
+                      <span className={`text-xs font-bold ${currentAccuracy >= 98 ? 'text-green-600' : currentAccuracy >= 80 ? 'text-yellow-600' : 'text-red-600'}`}>{currentAccuracy}%</span>
                     </div>
                   )}
-
-                  {/* Bismillah */}
-                  {ayah.bismillah && (
-                    <div className="text-center my-3 text-lg md:text-2xl text-quran-bismillah dark:text-quran-bismillah-dark">
-                      <div dangerouslySetInnerHTML={{ __html: ayah.bismillah }} />
-                    </div>
-                  )}
-
-                  {/* Ayah Text */}
-                  <span
-                    className="quran-ayat-text font-bold leading-[2.4] text-quran-text dark:text-quran-text-dark"
-                    style={{ fontFamily: "'Scheherazade New', serif" }}
-                  >
-                    <span dangerouslySetInnerHTML={{ __html: ayah.textTajweed }} />
-                  </span>
-
                 </div>
               );
-            } )}
-
+            })}
           </div>
-
-          {/* ───────── FOOTER ───────── */}
-          <div className="flex items-center justify-between px-3 md:px-6 py-3 quran-footer-border quran-footer-bg dark:quran-footer-bg">
-
-            {/* Prev */}
-            <button
-              onClick={handleNext}
-              disabled={!hasNextPage}
-              className="flex items-center gap-1 text-sm font-bold text-quran-text dark:text-quran-text-dark disabled:opacity-30"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Next
-            </button>
-
-            {/* Center */}
-            <div className="text-sm md:text-base font-bold text-quran-text dark:text-quran-text-dark text-center">
-              {manzil || `صفحہ ${currentPage}`}
-            </div>
-
-            {/* Next */}
-            <button
-              onClick={handlePrev}
-              disabled={!hasPrevPage}
-              className="flex items-center gap-1 text-sm font-bold text-quran-text dark:text-quran-text-dark disabled:opacity-30"
-            >
-              Prev
-              <ChevronRight className="w-4 h-4" />
-            </button>
-
+          <div className="flex items-center justify-between px-3 md:px-6 py-3 quran-footer-border quran-footer-bg">
+            <button onClick={handleNext} disabled={!pagination.hasNextPage} className="flex items-center gap-1 text-sm font-bold text-quran-text dark:text-quran-text-dark disabled:opacity-30"><ChevronLeft className="w-4 h-4" /> اگلا</button>
+            <div className="text-sm md:text-base font-bold text-quran-text dark:text-quran-text-dark text-center">{manzil || `صفحہ ${pagination.currentPage}`}</div>
+            <button onClick={handlePrev} disabled={!pagination.hasPrevPage} className="flex items-center gap-1 text-sm font-bold text-quran-text dark:text-quran-text-dark disabled:opacity-30">پچھلا <ChevronRight className="w-4 h-4" /></button>
           </div>
         </div>
       </div>
     </>
   );
 }
-// components/QuranViewer.tsx
