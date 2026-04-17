@@ -7,7 +7,7 @@ import {
   ParaPageResponse,
 } from "../types/quran"
 
-const BASE_URL = "https://quran-backend-pink.vercel.app/api/quran"
+const BASE_URL = "https://quran-backend-production-2a5b.up.railway.app/api/quran"
 
 export async function fetchSurahs(): Promise<Surah[]> {
   const res = await fetch(`${BASE_URL}/surahs`)
