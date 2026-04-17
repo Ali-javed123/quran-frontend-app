@@ -14,7 +14,7 @@ export async function fetchSurahs(): Promise<Surah[]> {
   if (!res.ok) throw new Error("Failed to fetch surahs")
   const json = await res.json()
 
-  return json.data // 👈 agar API { data: [] } return karti hai
+  return json.data.data // 👈 agar API { data: [] } return karti hai
 }
 
 export async function fetchParas(): Promise<Para[]> {
