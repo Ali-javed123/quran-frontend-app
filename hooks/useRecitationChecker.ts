@@ -444,7 +444,7 @@ const getSocket = (): Promise<Socket> => {
       socketInstance = socket;
       connectionPromise = null;
       resolve(socket);
-    });
+    })
 
     socket.on('connect_error', (err) => {
       clearTimeout(tid);
