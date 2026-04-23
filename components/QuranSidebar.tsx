@@ -167,7 +167,7 @@ import { QuranViewer } from './QuranViewer';
 interface QuranSidebarProps {
   initialType: QuranType;
 }
-
+                  
 export function QuranSidebar( { initialType }: QuranSidebarProps ) {
   const [ activeTab, setActiveTab ] = useState<QuranType>( initialType );
   const [ surahs, setSurahs ] = useState<Surah[]>( [] );
