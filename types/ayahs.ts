@@ -247,7 +247,7 @@ export interface Surah {
 
 export interface Para {
   surah_name: string;
-  ayahCount: number;
+  ayahCount?: number;
   para_no?: number;
 }
 
