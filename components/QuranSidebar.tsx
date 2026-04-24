@@ -162,8 +162,8 @@ import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { fetchSurahs, fetchParas } from '../lib/api';
 import { Surah, Para, QuranType } from '../types/quran';
 import { Loader2, AlertCircle, Sun, Moon } from 'lucide-react';
-import { QuranViewer } from './QuranViewer';
-
+import { QuranViewer } from './QuranViewer'; 
+// import { QuranViwer } from './QuranViwer';
 interface QuranSidebarProps {
   initialType: QuranType;
 }

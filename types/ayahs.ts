@@ -315,6 +315,21 @@ export interface RecitationReadyData {
   totalWords?: number;  // Added for progressive matching
   wordCount?: number;   // Alternative name
 }
+export interface WordPosition {
+  wordIndex: number;
+  startChar: number;
+  endChar: number;
+  text: string;
+  arabicText: string;
+}
+export interface WordVerificationResult {
+  wordIndex: number;
+  isCorrect: boolean;
+  userPronunciation?: string;
+  correctPronunciation?: string;
+  errorType?: 'substitution' | 'insertion' | 'deletion' | 'pronunciation';
+  confidence: number;
+}
 
 export interface WrongWord {
   position: number;
