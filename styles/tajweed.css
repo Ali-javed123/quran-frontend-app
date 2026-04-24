@@ -98,10 +98,8 @@ span.end {
 } */
 /* Base Arabic font */
 .font-arabic {
-  font-family:
-    "Uthmanic Script", "Traditional Arabic", "Amiri", "Scheherazade New", serif;
+  font-family: "Uthmanic Script", "Traditional Arabic", "Amiri", "Scheherazade New", serif;
   line-height: 2.2;
-
   font-size: 45px;
   font-weight: 800;
 }
@@ -111,63 +109,67 @@ span.end {
   text-align: right;
 }
 
-.tajweed-izhar {
-  color: #2e7d32;
+/* tajweed {
+  display: inline;
 }
-.tajweed-idgham-gunnah {
-  color: #0762ca;
+
+tajweed.tajweed-izhar {
+  color: #2e7d32 !important;
 }
-.tajweed-idgham-no-gunnah {
+tajweed.tajweed-idgham-gunnah {
+  color: #0762ca !important;
+}
+tajweed.tajweed-idgham-no-gunnah {
   color: #0d47a1;
+} 
+tajweed.tajweed-iqlab {
+  color: #6a1b9a !important;
 }
-.tajweed-iqlab {
-  color: #6a1b9a;
-}
-.tajweed-ikhfa {
-  color: #e65100;
-}
-
-.tajweed-ikhfa-shafawi {
-  color: #ff8c00;
-}
-.tajweed-idgham-shafawi {
-  color: #00838f;
-}
-.tajweed-izhar-shafawi {
-  color: #2e7d32;
+tajweed.tajweed-ikhfa {
+  color: #e65100 !important;
 }
 
-.tajweed-qalqalah {
-  color: #0097a7;
+tajweed.tajweed-ikhfa-shafawi {
+  color: #ff8c00 !important ; 
+}
+tajweed.tajweed-idgham-shafawi {
+  color: #00838f !important;
+}
+tajweed.tajweed-izhar-shafawi {
+  color: #2e7d32 !important;
 }
 
-.tajweed-madd-asli {
-  color: rgb(245, 11, 50);
-}
-.tajweed-madd-fari {
-  color: green;
+tajweed.tajweed-qalqalah {
+  color: #0097a7 !important;
 }
 
-.tajweed-ghunnah {
-  color: rgb(226, 7, 44);
+tajweed.tajweed-madd-asli {
+  color: rgb(245, 11, 50) !important;
+}
+tajweed.tajweed-madd-fari {
+  color: green !important ; 
 }
 
-.tajweed-laam-tafkheem {
-  color: cyan;
+tajweed.tajweed-ghunnah {
+  color: rgb(226, 7, 44) !important;
 }
-.tajweed-laam-tarqeeq {
+
+tajweed.tajweed-laam-tafkheem {
+  color: cyan !important;
+}
+tajweed.tajweed-laam-tarqeeq {
   color: rgb(1, 113, 218);
 }
 
-.tajweed-raa-heavy {
-  color: #8b4513;
+tajweed.tajweed-raa-heavy {
+  color: #8b4513 !important;
 }
-.tajweed-raa-light {
-  color: #8b4513;
+tajweed.tajweed-raa-light {
+  color: #8b4513 !important;
 }
 
 .tajweed-waqf {
-  color: #795548;
+  color: #8b4513 !important;
   font-weight: bold;
 
   border-radius: 4px;
@@ -175,12 +177,12 @@ span.end {
   margin: 0 1px;
 }
 
-.tajweed-makharij-throat {
+tajweed.tajweed-makharij-throat {
   border-radius: 2px;
-  color: #8b4513;
+  color: #8b4513 !important;
 }
 
-.tajweed-sifaat-heavy {
+tajweed.tajweed-sifaat-heavy {
   font-weight: bold;
   text-shadow: 0 0 0.5px #8b4513;
   color: #8b4513;
@@ -207,15 +209,15 @@ span.end {
 
 .dark span.end {
   background-color: #4caf50;
-  color: #1e1e1e;
+  color: #1e1e1e !important;
 }
 
-.dark .tajweed-waqf {
-  color: #ffcc80;
+.dark tajweed.tajweed-waqf {
+  color: #ffcc80 !important;
 }
 
-.dark .tajweed-makharij-throat {
-  color: #8b4513;
+.dark tajweed.tajweed-makharij-throat {
+  color: #8b4513 !important;
 }
 
 @media (max-width: 640px) {
@@ -227,5 +229,370 @@ span.end {
     height: 1.4em;
     line-height: 1.4em;
     font-size: 0.6em;
+  }
+} */
+/* styles/tajweed.css - Complete fixed version */
+/* ============================================
+   TAJWEED STYLES - ORIGINAL CLASS NAMES PRESERVED
+   All colors exactly as your previous setup
+   ============================================ */
+
+/* Base Arabic Text Styling */
+.font-arabic {
+  font-family: "Uthmanic Script", "Traditional Arabic", "Amiri", "Scheherazade New", serif;
+  line-height: 2.2;
+  font-size: 45px;
+  font-weight: 800;
+}
+
+.arabic-text {
+  direction: rtl;
+  text-align: right;
+}
+
+/* ============================================
+   CORE TAJWEED RULES - Original Colors
+   Each class separate as requested
+   ============================================ */
+
+/* Make all tajweed elements inline */
+tajweed {
+  display: inline;
+}
+
+/* IZHAR */
+tajweed.tajweed-izhar {
+  color: #2e7d32 !important;
+}
+
+/* IDGHAM WITH GUNNAH */
+tajweed.tajweed-idgham-gunnah {
+  color: #0762ca !important;
+}
+
+/* IDGHAM WITHOUT GUNNAH */
+tajweed.tajweed-idgham-no-gunnah {
+  color: #0d47a1 !important;
+}
+
+/* IQLAB */
+tajweed.tajweed-iqlab {
+  color: #6a1b9a !important;
+}
+
+/* IKHFA */
+tajweed.tajweed-ikhfa {
+  color: #e65100 !important;
+}
+
+/* IKHFA SHAFAWI */
+tajweed.tajweed-ikhfa-shafawi {
+  color: #ff8c00 !important;
+}
+
+/* IDGHAM SHAFAWI */
+tajweed.tajweed-idgham-shafawi {
+  color: #00838f !important;
+}
+
+/* IZHAR SHAFAWI */
+tajweed.tajweed-izhar-shafawi {
+  color: #2e7d32 !important;
+}
+
+/* QALQALAH */
+tajweed.tajweed-qalqalah {
+  color: #0097a7 !important;
+}
+
+/* MADD ASLI */
+tajweed.tajweed-madd-asli {
+  color: rgb(245, 11, 50) !important;
+}
+
+/* MADD FARI */
+tajweed.tajweed-madd-fari {
+  color: green !important;
+}
+
+/* GHUNNAH */
+tajweed.tajweed-ghunnah {
+  color: rgb(226, 7, 44) !important;
+}
+
+/* LAAM TAFKHEEM */
+tajweed.tajweed-laam-tafkheem {
+  color: cyan !important;
+}
+
+/* LAAM TARQEEQ */
+tajweed.tajweed-laam-tarqeeq {
+  color: rgb(1, 113, 218) !important;
+}
+
+/* RAA HEAVY */
+tajweed.tajweed-raa-heavy {
+  color: #8b4513 !important;
+}
+
+/* RAA LIGHT */
+tajweed.tajweed-raa-light {
+  color: #974205 !important;
+}
+
+/* WAQF */
+.tajweed-waqf {
+  color: #8b4513 !important;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 0 2px;
+  margin: 0 1px;
+}
+
+/* MAKHARIJ THROAT */
+tajweed.tajweed-makharij-throat {
+  border-radius: 2px;
+  color: #8b4513 !important;
+}
+
+/* SIFAAT HEAVY */
+tajweed.tajweed-sifaat-heavy {
+  font-weight: bold;
+  text-shadow: 0 0 0.5px #8b4513;
+  color: #8b4513;
+}
+takween.tajweed-halaq {
+  color: darkgreen !important;
+}
+
+/* END AYAH MARKER */
+span.end {
+  display: inline;
+  padding: 5px 10px;
+  background-color: #2e7d32;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.8em;
+  font-size: 15px !important;
+  margin: 0 0.1em;
+  font-family: sans-serif;
+  font-weight: 500;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
+/* ============================================
+   SPAN SUPPORT (For database spans)
+   Each class separate - exactly as above colors
+   ============================================ */
+
+/* IZHAR - Span version */
+span.tajweed-izhar {
+  color: #2e7d32 !important;
+}
+
+/* IDGHAM WITH GUNNAH - Span version */
+span.tajweed-idgham-gunnah {
+  color: #0762ca !important;
+}
+
+/* IDGHAM WITHOUT GUNNAH - Span version */
+span.tajweed-idgham-no-gunnah {
+  color: #0d47a1 !important;
+}
+
+/* IQLAB - Span version */
+span.tajweed-iqlab {
+  color: #6a1b9a !important;
+}
+
+/* IKHFA - Span version */
+span.tajweed-ikhfa {
+  color: #e65100 !important;
+}
+
+/* IKHFA SHAFAWI - Span version */
+span.tajweed-ikhfa-shafawi {
+  color: #ff8c00 !important;
+}
+
+/* IDGHAM SHAFAWI - Span version */
+span.tajweed-idgham-shafawi {
+  color: #00838f !important;
+}
+
+/* IZHAR SHAFAWI - Span version */
+span.tajweed-izhar-shafawi {
+  color: red !important;
+}
+
+/* QALQALAH - Span version */
+span.tajweed-qalqalah {
+  color: rgb(219, 7, 124) !important;
+}
+
+/* MADD ASLI - Span version */
+span.tajweed-madd-asli {
+  color: rgb(245, 11, 50) !important;
+}
+
+/* MADD FARI - Span version */
+span.tajweed-madd-fari {
+  color: green !important;
+}
+
+/* GHUNNAH - Span version */
+span.tajweed-ghunnah {
+  color: rgb(226, 7, 44) !important;
+}
+
+/* LAAM TAFKHEEM - Span version */
+span.tajweed-laam-tafkheem {
+  color: cyan !important;
+}
+
+/* LAAM TARQEEQ - Span version */
+span.tajweed-laam-tarqeeq {
+  color: rgb(1, 113, 218) !important;
+}
+
+/* RAA HEAVY - Span version */
+span.tajweed-raa-heavy {
+  color: darkgreen !important;
+}
+
+/* RAA LIGHT - Span version */
+span.tajweed-raa-light {
+  color: #8b4513 !important;
+}
+
+/* MAKHARIJ THROAT - Span version */
+span.tajweed-makharij-throat {
+  border-radius: 2px;
+  color: darkgreen !important;
+}
+
+/* SIFAAT HEAVY - Span version */
+span.tajweed-sifaat-heavy {
+  font-weight: bold;
+  color: darkgreen !important;
+}
+
+/* ============================================
+   DATABASE CLASS NAME SUPPORT
+   (ikhafa, qalaqah, ghunnah, halaq, etc.)
+   ============================================ */
+
+/* Ikhafa (from database) */
+span.ikhafa,
+tajweed.ikhafa {
+  color: #e65100 !important;
+}
+
+/* Qalaqah (from database) */
+span.qalaqah,
+tajweed.qalaqah {
+  color: #0097a7 !important;
+}
+
+/* Ghunnah (from database) */
+span.ghunnah,
+tajweed.ghunnah {
+  color: rgb(226, 7, 44) !important;
+}
+
+/* Halaq (throat letters from database) */
+span.halaq,
+tajweed.halaq {
+  border-radius: 2px;
+  color: darkgreen !important;
+}
+
+/* Mustaqilah (from database) */
+span.mustaqilah,
+tajweed.mustaqilah {
+  font-weight: bold;
+  text-shadow: 0 0 0.5px #8b4513;
+  color: #b6520b;
+}
+
+/* Madda normal (from database) */
+span.madda_normal,
+tajweed.madda_normal {
+  color: rgb(245, 11, 50) !important;
+}
+
+/* Madda permissible (from database) */
+span.madda_permissible,
+tajweed.madda_permissible,
+span.madda_obligatory,
+tajweed.madda_obligatory {
+  color: green !important;
+}
+
+/* Laam shamsiyah (from database) */
+span.laam_shamsiyah,
+tajweed.laam_shamsiyah {
+  color: cyan !important;
+}
+
+/* Slnt (silent from database) */
+span.slnt,
+tajweed.slnt {
+  color: #888 !important;
+  font-style: italic;
+}
+
+/* Ham wasl (from database) */
+span.ham_wasl,
+tajweed.ham_wasl {
+  color: #1565c0 !important;
+}
+
+/* ============================================
+   DARK MODE SUPPORT
+   ============================================ */
+
+.dark span.end {
+  background-color: #4caf50;
+  color: #1e1e1e !important;
+}
+
+.dark tajweed.tajweed-waqf,
+.dark .tajweed-waqf,
+.dark span.tajweed-waqf {
+  color: #ffcc80 !important;
+}
+
+.dark tajweed.tajweed-makharij-throat,
+.dark span.tajweed-makharij-throat,
+.dark span.halaq,
+.dark tajweed.halaq {
+  color: #c8a97e !important;
+}
+
+.dark tajweed.tajweed-sifaat-heavy,
+.dark span.tajweed-sifaat-heavy,
+.dark span.mustaqilah,
+.dark tajweed.mustaqilah {
+  color: #c8a97e;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 640px) {
+  .arabic-text {
+    font-size: 1.5rem;
+  }
+  span.end {
+    width: 1.4em;
+    height: 1.4em;
+    line-height: 1.4em;
+    font-size: 0.6em !important;
   }
 }
