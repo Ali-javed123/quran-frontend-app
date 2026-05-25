@@ -30,7 +30,7 @@ interface UseRecitationCheckerReturn {
 
 // const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
 const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'https://quran-backend-pink';
-
+      
 let socketInstance: Socket | null = null;
 let connectionPromise: Promise<Socket> | null = null;
 

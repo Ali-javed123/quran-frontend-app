@@ -138,7 +138,7 @@ export interface WordVerificationResult {
   userPronunciation?: string;
   correctPronunciation?: string;
   errorType?: 'substitution' | 'insertion' | 'deletion' | 'pronunciation';
-  confidence: number;
+  confidence?: number;
 }
 
 export interface WrongWord {
