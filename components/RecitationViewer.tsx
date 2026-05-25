@@ -579,9 +579,10 @@ export const RecitationViewer: React.FC<RecitationViewerProps> = ({
           w.userWord &&
           w.correctWord &&
           (
-            w.errorType === 'wrong' ||
-            w.errorType === 'substitution' ||
-            w.errorType === 'close_match'
+                 w.errorType === 'substitution' ||
+      w.errorType === 'close_match' ||
+      w.errorType === 'error'
+
           )
       );                                              
 
