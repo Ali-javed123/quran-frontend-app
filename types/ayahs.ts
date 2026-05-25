@@ -152,7 +152,7 @@ export interface WrongWord {
   isExtra?: boolean;
   isMissing?: boolean;
   isPending?: boolean;
-  errorType?: 'substitution' | 'deletion' | 'insertion' | 'pending' | 'close_match';
+  errorType?: 'substitution' | 'deletion' | 'insertion' | 'pending' | 'close_match'|'error';
   similarity?: number;
 }
 
@@ -176,7 +176,9 @@ export interface VerificationResultData {
   transcribedRoman?: string;
   spokenRoman?: string;
   correctRoman?: string;
+  waqfPositions?: number[];
   accuracy: number;
+  lastCorrectWord?: string;
   isPerfect: boolean;
   wrongWords: WrongWord[];
   pendingWords?: WrongWord[];  // Words not yet recited
